@@ -23,6 +23,9 @@ wifi:
 ota:
   platform: esphome
 
+web_server:
+  port: 80
+
 logger:
   baud_rate: 0
   esp8266_store_log_strings_in_flash: false

@@ -1,6 +1,6 @@
 substitutions:
   name: growatt-mtl
-  external_components_source: .
+  external_components_source: github://mattaltus/growatt-XX00MTL-esphome@master
   tx_pin: D8
   rx_pin: D7
   fault_pin: D1

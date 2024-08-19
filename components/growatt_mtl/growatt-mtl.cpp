@@ -140,13 +140,19 @@ namespace growatt_mtl {
     LOG_TEXT_SENSOR  ("   ", "Firmware Version", firmware_version_text_sensor_);
     LOG_TEXT_SENSOR  ("   ", "Manufacturer", manufacturer_text_sensor_);
     LOG_TEXT_SENSOR  ("   ", "Serial Number", serial_number_text_sensor_);
+    LOG_PIN          ("   Comms LED: ", comms_pin_);
+    LOG_PIN          ("   Fault LED: ", fault_pin_);
 
     check_uart_settings(9600, 1, esphome::uart::UART_CONFIG_PARITY_NONE, 8);
   }
 
   void GrowattMTLComponent::setup() {
-    comms_pin_->pin_mode(esphome::gpio::FLAG_OUTPUT);
-    fault_pin_->pin_mode(esphome::gpio::FLAG_OUTPUT);
+    LOG_PIN("Comms LED: ", comms_pin_);
+    comms_pin_->setup();
+    comms_pin_->digital_write(0);
+    LOG_PIN("Fault LED: ", fault_pin_);
+    fault_pin_->setup();
+    fault_pin_->digital_write(1);
     check_uart_settings(9600, 1, esphome::uart::UART_CONFIG_PARITY_NONE, 8);
   }
 
@@ -156,6 +162,10 @@ namespace growatt_mtl {
     comms_pin_->digital_write(0);
 
     send_cmd(GW_CMD_STATUS);
+    if (!available()) {
+      ESP_LOGE(TAG, "No status data available");
+      return;
+    }
     d = recv_data(GW_CMD_STATUS);
     if (!d) {
       ESP_LOGE(TAG, "Error getting status data");
@@ -166,7 +176,7 @@ namespace growatt_mtl {
 
     status_sensor_->publish_state(gw_data_get_status(d));
     fault_code_sensor_->publish_state(gw_data_get_fault_code(d));
-    fault_text_sensor_->publish_state(fault_text(gw_data_get_fault_code(d)));
+    fault_text_text_sensor_->publish_state(fault_text(gw_data_get_fault_code(d)));
     voltage_pv1_sensor_->publish_state(gw_data_get_voltage_pv1(d));
     voltage_pv2_sensor_->publish_state(gw_data_get_voltage_pv2(d));
     power_pv_sensor_->publish_state(gw_data_get_power_pv(d));

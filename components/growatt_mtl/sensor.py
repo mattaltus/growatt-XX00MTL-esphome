@@ -8,12 +8,14 @@ from esphome.const import (
     DEVICE_CLASS_VOLTAGE,
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_FREQUENCY,
+    DEVICE_CLASS_DURATION,
     DEVICE_CLASS_EMPTY,
     ICON_FLASH,
     ICON_GAUGE,
     ICON_POWER,
     ICON_EMPTY,
     ICON_CURRENT_AC,
+    ICON_TIMER,
     STATE_CLASS_MEASUREMENT,
     STATE_CLASS_TOTAL_INCREASING,
     UNIT_CELSIUS,
@@ -23,6 +25,7 @@ from esphome.const import (
     UNIT_WATT_HOURS,
     UNIT_HERTZ,
     UNIT_EMPTY,
+    UNIT_SECOND,
 )
 
 from . import CONF_GROWATT_ID, GrowattMTLComponent
@@ -141,6 +144,18 @@ CONFIG_SCHEMA = cv.Schema(
             accuracy_decimals=1,
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
+        ),
+        cv.Optional(CONF_POWER_MAX): sensor.sensor_schema(
+            unit_of_measurement=UNIT_WATT,
+            icon=ICON_POWER,
+            accuracy_decimals=1,
+            device_class=DEVICE_CLASS_POWER,
+        ),
+        cv.Optional(CONF_TOTAL_TIME): sensor.sensor_schema(
+            unit_of_measurement=UNIT_SECOND,
+            icon=ICON_TIMER,
+            accuracy_decimals=1,
+            device_class=DEVICE_CLASS_DURATION,
         ),
     }
 )

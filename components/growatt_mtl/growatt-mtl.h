@@ -13,8 +13,8 @@ namespace growatt_mtl {
 
 class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
   public:
-    void set_fault_pin(GPIOPin *pin) { fault_pin_ = pin; }
-    void set_comms_pin(GPIOPin *pin) { comms_pin_ = pin; }
+    void set_fault_pin(InternalGPIOPin *pin) { fault_pin_ = pin; }
+    void set_comms_pin(InternalGPIOPin *pin) { comms_pin_ = pin; }
 
     void set_has_fault_binary_sensor(binary_sensor::BinarySensor *has_fault_binary_sensor) { has_fault_binary_sensor_ = has_fault_binary_sensor; }
 
@@ -33,7 +33,7 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     void set_total_time_sensor    (sensor::Sensor *total_time_sensor)     { total_time_sensor_     = total_time_sensor; }
     void set_power_max_sensor     (sensor::Sensor *power_max_sensor)      { power_max_sensor_      = power_max_sensor; }
 
-    void set_fault_text_sensor           (text_sensor::TextSensor *fault_text_sensor)            { fault_text_sensor_            = fault_text_sensor; }
+    void set_fault_text_text_sensor      (text_sensor::TextSensor *fault_text_text_sensor)       { fault_text_text_sensor_       = fault_text_text_sensor; }
     void set_firmware_version_text_sensor(text_sensor::TextSensor *firmware_version_text_sensor) { firmware_version_text_sensor_ = firmware_version_text_sensor; }
     void set_manufacturer_text_sensor    (text_sensor::TextSensor *manufacturer_text_sensor)     { manufacturer_text_sensor_     = manufacturer_text_sensor; }
     void set_serial_number_text_sensor   (text_sensor::TextSensor *serial_number_text_sensor)    { serial_number_text_sensor_    = serial_number_text_sensor; }
@@ -63,13 +63,13 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     sensor::Sensor *total_time_sensor_{nullptr};
     sensor::Sensor *power_max_sensor_{nullptr};
 
-    text_sensor::TextSensor *fault_text_sensor_{nullptr};
+    text_sensor::TextSensor *fault_text_text_sensor_{nullptr};
     text_sensor::TextSensor *firmware_version_text_sensor_{nullptr};
     text_sensor::TextSensor *manufacturer_text_sensor_{nullptr};
     text_sensor::TextSensor *serial_number_text_sensor_{nullptr};
 
-    GPIOPin *comms_pin_;
-    GPIOPin *fault_pin_;
+    InternalGPIOPin *comms_pin_;
+    InternalGPIOPin *fault_pin_;
 
 }; // class
 

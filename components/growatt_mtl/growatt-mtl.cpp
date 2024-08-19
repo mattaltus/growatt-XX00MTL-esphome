@@ -149,11 +149,16 @@ namespace growatt_mtl {
   void GrowattMTLComponent::dump_config() {
     ESP_LOGCONFIG    (TAG,   "Growatt-MTL:");
     LOG_BINARY_SENSOR("   ", "Has Fault", has_fault_binary_sensor_);
+    LOG_SENSOR       ("   ", "Status Code", status_sensor_);
+    LOG_TEXT_SENSOR  ("   ", "Status", status_text_text_sensor_);
+    LOG_SENSOR       ("   ", "Fault Code", fault_code_sensor_);
+    LOG_TEXT_SENSOR  ("   ", "Fault", fault_text_text_sensor_);
     LOG_SENSOR       ("   ", "Voltage PV1", voltage_pv1_sensor_);
     LOG_SENSOR       ("   ", "Voltage PV2", voltage_pv2_sensor_);
     LOG_SENSOR       ("   ", "Power PV", power_pv_sensor_);
     LOG_SENSOR       ("   ", "Voltage AC", voltage_ac_sensor_);
-    LOG_SENSOR       ("   ", "Freqiency AC", freq_ac_sensor_);
+    LOG_SENSOR       ("   ", "Current AC", current_ac_sensor_);
+    LOG_SENSOR       ("   ", "Frequency AC", freq_ac_sensor_);
     LOG_SENSOR       ("   ", "Power AC", power_ac_sensor_);
     LOG_SENSOR       ("   ", "Temperature", temperature_sensor_);
     LOG_SENSOR       ("   ", "Energy Today", energy_today_sensor_);
@@ -201,6 +206,7 @@ namespace growatt_mtl {
     voltage_pv2_sensor_->publish_state(gw_data_get_voltage_pv2(d));
     power_pv_sensor_->publish_state(gw_data_get_power_pv(d));
     voltage_ac_sensor_->publish_state(gw_data_get_voltage_ac(d));
+    current_ac_sensor_->publish_state(gw_data_get_current_ac(d));
     freq_ac_sensor_->publish_state(gw_data_get_freq_ac(d));
     power_ac_sensor_->publish_state(gw_data_get_power_ac(d));
     temperature_sensor_->publish_state(gw_data_get_temperature(d));

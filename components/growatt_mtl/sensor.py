@@ -127,14 +127,14 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional(CONF_ENERGY_TODAY): sensor.sensor_schema(
             unit_of_measurement=UNIT_WATT_HOURS,
             icon=ICON_POWER,
-            accuracy_decimals=1,
+            accuracy_decimals=0,
             device_class=DEVICE_CLASS_ENERGY,
             state_class=STATE_CLASS_TOTAL_INCREASING,
         ),
         cv.Optional(CONF_ENERGY_TOTAL): sensor.sensor_schema(
             unit_of_measurement=UNIT_WATT_HOURS,
             icon=ICON_POWER,
-            accuracy_decimals=1,
+            accuracy_decimals=0,
             device_class=DEVICE_CLASS_ENERGY,
             state_class=STATE_CLASS_TOTAL_INCREASING,
         ),

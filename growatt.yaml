@@ -1,16 +1,12 @@
 substitutions:
-  name: growatt-mtl
   external_components_source: github://mattaltus/growatt-XX00MTL-esphome@master
-  tx_pin: D8
-  rx_pin: D7
-  fault_pin: D1
-  comms_pin: D2
 
 esphome:
-  name: ${name}
-  platform: ESP8266
-  board: d1_mini
+  name: growatt-inverter
   min_version: 2024.6.0
+
+esp8266:
+  board: d1_mini
 
 external_components:
   - source: ${external_components_source}
@@ -21,42 +17,89 @@ wifi:
   password: !secret wifi_password
 
 ota:
-  platform: esphome
+  - platform: esphome
+    password: !secret ota_password
 
 web_server:
   port: 80
 
 logger:
-  baud_rate: 0
+  level: DEBUG
+  baud_rate: 74880
   esp8266_store_log_strings_in_flash: false
 
 api:
-  reboot_timeout: 0s
+  encryption:
+    key: !secret api_key
+
+status_led:
+  pin: D4
 
 uart:
   id: uart_0
   baud_rate: 9600
-  tx_pin: ${tx_pin}
-  rx_pin: ${rx_pin}
+  tx_pin: D5
+  rx_pin: D6
   debug:
     direction: BOTH
     dummy_receiver: false
     after:
       delimiter: "\n"
     sequence:
-      - lambda: UARTDebug::log_string(direction, bytes);
+      - lambda: UARTDebug::log_hex(direction, bytes, '|');
 
 growatt_mtl:
   uart_id: uart_0
   id: growatt0
-  fault_pin: ${fault_pin}
-  comms_pin: ${comms_pin}
+  fault_pin: D2
+  comms_pin: D1
+  update_interval: 60s
 text_sensor:
   - platform: growatt_mtl
     growatt_mtl_id: growatt0
     manufacturer:
-      name: "${name} model description"
+      name: "growatt model description"
     firmware_version:
-      name: "${name} firmware version"
+      name: "growatt firmware version"
     serial_number:
-      name: "${name} serial number"
+      name: "growatt serial number"
+    fault_text:
+      name: "growatt fault"
+    status_text:
+      name: "growatt status"
+binary_sensor:
+  - platform: growatt_mtl
+    growatt_mtl_id: growatt0
+    has_fault:
+      name: "growatt has fault"
+sensor:
+  - platform: growatt_mtl
+    growatt_mtl_id: growatt0
+    status:
+      name: "growatt status code"
+    fault_code:
+      name: "growatt fault code"
+    voltage_pv1:
+      name: "growatt pv1 voltage"
+    voltage_pv2:
+      name: "growatt pv2 voltage"
+    power_pv:
+      name: "growatt pv power"
+    voltage_ac:
+      name: "growatt ac voltage"
+    current_ac:
+      name: "growatt ac current"
+    freq_ac:
+      name: "growatt ac frequency"
+    power_ac:
+      name: "growatt ac power"
+    temperature:
+      name: "growatt temperature"
+    energy_today:
+      name: "growatt energy today"
+    energy_total:
+      name: "growatt energy total"
+    total_time:
+      name: "growatt total run time"
+    power_max:
+      name: "growatt max power"

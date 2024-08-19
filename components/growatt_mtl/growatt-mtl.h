@@ -33,6 +33,7 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     void set_total_time_sensor    (sensor::Sensor *total_time_sensor)     { total_time_sensor_     = total_time_sensor; }
     void set_power_max_sensor     (sensor::Sensor *power_max_sensor)      { power_max_sensor_      = power_max_sensor; }
 
+    void set_status_text_text_sensor     (text_sensor::TextSensor *status_text_text_sensor)      { status_text_text_sensor_      = status_text_text_sensor; }
     void set_fault_text_text_sensor      (text_sensor::TextSensor *fault_text_text_sensor)       { fault_text_text_sensor_       = fault_text_text_sensor; }
     void set_firmware_version_text_sensor(text_sensor::TextSensor *firmware_version_text_sensor) { firmware_version_text_sensor_ = firmware_version_text_sensor; }
     void set_manufacturer_text_sensor    (text_sensor::TextSensor *manufacturer_text_sensor)     { manufacturer_text_sensor_     = manufacturer_text_sensor; }
@@ -42,6 +43,7 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     void update() override;
     void dump_config() override;
 
+    void clear_buffer();
     void send_cmd(int command);
     gw_data_t *recv_data(int command);
 
@@ -63,6 +65,7 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     sensor::Sensor *total_time_sensor_{nullptr};
     sensor::Sensor *power_max_sensor_{nullptr};
 
+    text_sensor::TextSensor *status_text_text_sensor_{nullptr};
     text_sensor::TextSensor *fault_text_text_sensor_{nullptr};
     text_sensor::TextSensor *firmware_version_text_sensor_{nullptr};
     text_sensor::TextSensor *manufacturer_text_sensor_{nullptr};

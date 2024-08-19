@@ -13,6 +13,7 @@ CONF_FIRMWARE_VERSION = "firmware_version"
 CONF_MANUFACTURER = "manufacturer"
 CONF_SERIAL_NUMBER = "serial_number"
 CONF_FAULT = "fault_text"
+CONF_STATUS = "status_text"
 
 
 TEXT_SENSORS = [
@@ -20,6 +21,7 @@ TEXT_SENSORS = [
     CONF_MANUFACTURER,
     CONF_SERIAL_NUMBER,
     CONF_FAULT,
+    CONF_STATUS,
 ]
 
 
@@ -36,6 +38,9 @@ CONFIG_SCHEMA = cv.Schema(
             {cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}
         ),
         cv.Optional(CONF_FAULT): text_sensor.TEXT_SENSOR_SCHEMA.extend(
+            {cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}
+        ),
+        cv.Optional(CONF_STATUS): text_sensor.TEXT_SENSOR_SCHEMA.extend(
             {cv.GenerateID(): cv.declare_id(text_sensor.TextSensor)}
         ),
     }

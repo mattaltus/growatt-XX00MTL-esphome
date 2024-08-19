@@ -139,7 +139,7 @@ typedef union {
 #define gw_data_get_voltage_ac(d)  (ntohs(d->status.voltage_ac) / GW_MULTIPLY_VOLTAGE)
 #define gw_data_get_power_ac(d)    (ntohs(d->status.power_ac) / GW_MULTIPLY_POWER)
 #define gw_data_get_freq_ac(d)     (ntohs(d->status.freq_ac) / GW_MULTIPLY_FREQUENCY)
-#define gw_data_get_status(d)      (ntohs(d->status.status))
+#define gw_data_get_status(d)      (d->status.status)
 #define gw_data_get_fault_code(d)  (ntohs(d->status.fault))
 #define gw_data_get_temperature(d) (ntohs(d->status.temperature) / GW_MULTIPLY_TEMPERATURE)
 

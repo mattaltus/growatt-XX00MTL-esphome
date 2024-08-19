@@ -31,8 +31,24 @@ namespace growatt_mtl {
     return (uint16_t)ctx->ctx;
   }
 
-  static std::string fault_text(int fault) {
-    switch (fault) {
+  std::string status_text(gw_data_t *d) {
+    switch (gw_data_get_status(d)) {
+      case GW_STATUS_NORMAL:
+        return "OK";
+      case GW_STATUS_WAITING:
+        return "Wait";
+      case GW_STATUS_FAULT:
+        return "Fault";
+      default:
+        return "Unknown";
+    }
+  }
+
+  std::string fault_text(gw_data_t *d) {
+    if (gw_data_get_status(d) != GW_STATUS_FAULT)
+      return "None";
+
+    switch (gw_data_get_fault_code(d)) {
       case 1 ... 23:
         return "Coded Error";
       case GW_ERROR_AUTO_TEST_FAIL:
@@ -73,8 +89,15 @@ namespace growatt_mtl {
     ctx_add_(&ctx, &buf, sizeof(buf) - sizeof(buf.checksum));
     buf.checksum = ctx_fin_(&ctx);
 
-    flush();
     write_array((uint8_t *)&buf, sizeof(buf));
+    flush();
+  }
+
+  void GrowattMTLComponent::clear_buffer() {
+    while (available()) {
+      uint8_t b;
+      read_byte(&b);
+    }
   }
 
   gw_data_t *GrowattMTLComponent::recv_data(int command) {
@@ -92,20 +115,20 @@ namespace growatt_mtl {
      || header.header2 != GW_DATA_HEADER2
      || header.header3 != GW_DATA_HEADER3) {
       ESP_LOGW(TAG, "Error reading header");
-      flush();
+      clear_buffer();
       return NULL;
     }
 
     if (header.type != command) {
       ESP_LOGW(TAG, "Received wrong command %d", header.type);
-      flush();
+      clear_buffer();
       return NULL;
     }
 
     ctx_add_(&ctx, &header, sizeof(header));
     if (header.size > sizeof(data)) {
       ESP_LOGW(TAG, "Size error %d", header.size);
-      flush();
+      clear_buffer();
       return NULL;
     }
 
@@ -117,7 +140,7 @@ namespace growatt_mtl {
 
     if (footer.checksum != ctx_fin_(&ctx)){
       ESP_LOGW(TAG, "Checksum error");
-      flush();
+      clear_buffer();
       return NULL;
     }
     return &data;
@@ -162,10 +185,6 @@ namespace growatt_mtl {
     comms_pin_->digital_write(0);
 
     send_cmd(GW_CMD_STATUS);
-    if (!available()) {
-      ESP_LOGE(TAG, "No status data available");
-      return;
-    }
     d = recv_data(GW_CMD_STATUS);
     if (!d) {
       ESP_LOGE(TAG, "Error getting status data");
@@ -175,8 +194,9 @@ namespace growatt_mtl {
     fault_pin_->digital_write(gw_data_get_status(d) == GW_STATUS_FAULT);
 
     status_sensor_->publish_state(gw_data_get_status(d));
+    status_text_text_sensor_->publish_state(status_text(d));
     fault_code_sensor_->publish_state(gw_data_get_fault_code(d));
-    fault_text_text_sensor_->publish_state(fault_text(gw_data_get_fault_code(d)));
+    fault_text_text_sensor_->publish_state(fault_text(d));
     voltage_pv1_sensor_->publish_state(gw_data_get_voltage_pv1(d));
     voltage_pv2_sensor_->publish_state(gw_data_get_voltage_pv2(d));
     power_pv_sensor_->publish_state(gw_data_get_power_pv(d));
@@ -192,8 +212,8 @@ namespace growatt_mtl {
       return;
     }
 
-    energy_today_sensor_->publish_state(gw_data_get_energy_today(d));
-    energy_total_sensor_->publish_state(gw_data_get_energy_total(d));
+    energy_today_sensor_->publish_state(gw_data_get_energy_today(d) * 1000);
+    energy_total_sensor_->publish_state(gw_data_get_energy_total(d) * 1000);
     total_time_sensor_->publish_state(gw_data_get_total_time(d));
 
     if (!firmware_version_text_sensor_->has_state()) {

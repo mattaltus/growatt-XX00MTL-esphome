@@ -60,12 +60,12 @@ namespace growatt_mtl {
     struct ctx ctx;
     gw_cmd_t buf = {0};
 
-    buf.header[0] = GW_CMD_HEADER[0];
-    buf.header[1] = GW_CMD_HEADER[1];
-    buf.addr   = GW_ADDRESS_BROADCAST;
-    buf.c0     = GW_CMD_CODE;
-    buf.c1     = command;
-    buf.size   = 0;
+    buf.header1 = GW_CMD_HEADER1;
+    buf.header2 = GW_CMD_HEADER2;
+    buf.addr    = GW_ADDRESS_BROADCAST;
+    buf.c0      = GW_CMD_CODE;
+    buf.c1      = command;
+    buf.size    = 0;
 
     ctx_ini_(&ctx);
     ctx_add_(&ctx, &buf, sizeof(buf) - sizeof(buf.checksum));
@@ -76,66 +76,68 @@ namespace growatt_mtl {
   }
 
   gw_data_t *GrowattMTLComponent::recv_data(int command) {
-    static gw_data_t d = {0};
+    gw_data_header_t header = {0};
+    gw_data_footer_t footer = {0};
+    static gw_data_t data   = {0};
     int s;
     size_t exs = 0;
     struct ctx ctx = {0};
 
     ctx_ini_(&ctx);
 
-    read_array((uint8_t *)&d.header, sizeof(d.header));
-    if (d.header.header[0] != GW_DATA_HEADER[0]
-     || d.header.header[1] != GW_DATA_HEADER[1]
-     || d.header.header_tail != GW_DATA_HEADER_TAIL) {
+    read_array((uint8_t *)&header, sizeof(header));
+    if (header.header1 != GW_DATA_HEADER1
+     || header.header2 != GW_DATA_HEADER2
+     || header.header3 != GW_DATA_HEADER3) {
       ESP_LOGW(TAG, "Error reading header");
       flush();
       return NULL;
     }
 
-    if (d.header.type != command) {
-      ESP_LOGW(TAG, "Received wrong command %d", d.header.type);
+    if (header.type != command) {
+      ESP_LOGW(TAG, "Received wrong command %d", header.type);
       flush();
       return NULL;
     }
 
-    ctx_add_(&ctx, &d.header, sizeof(d.header));
-    if (d.header.size > sizeof(d.data)) {
-      ESP_LOGW(TAG, "Size error %d", d.header.size);
+    ctx_add_(&ctx, &header, sizeof(header));
+    if (header.size > sizeof(data)) {
+      ESP_LOGW(TAG, "Size error %d", header.size);
       flush();
       return NULL;
     }
 
-    read_array((uint8_t *)&d.data, d.header.size);
-    ctx_add_(&ctx, &d.data, d.header.size);
+    read_array((uint8_t *)&data, header.size);
+    ctx_add_(&ctx, &data, header.size);
 
-    read_array((uint8_t *)&d.footer, sizeof(d.footer));
-    d.footer.checksum = ntohs(d.footer.checksum);
+    read_array((uint8_t *)&footer, sizeof(footer));
+    footer.checksum = ntohs(footer.checksum);
 
-    if (d.footer.checksum != ctx_fin_(&ctx)){
+    if (footer.checksum != ctx_fin_(&ctx)){
       ESP_LOGW(TAG, "Checksum error");
       flush();
       return NULL;
     }
-    return &d;
+    return &data;
   }
 
   void GrowattMTLComponent::dump_config() {
-    ESP_LOGCONFIG(TAG, "Growatt-MTL:");
+    ESP_LOGCONFIG    (TAG,   "Growatt-MTL:");
     LOG_BINARY_SENSOR("   ", "Has Fault", has_fault_binary_sensor_);
-    LOG_SENSOR("   ", "Voltage PV1", voltage_pv1_sensor_);
-    LOG_SENSOR("   ", "Voltage PV2", voltage_pv2_sensor_);
-    LOG_SENSOR("   ", "Power PV", power_pv_sensor_);
-    LOG_SENSOR("   ", "Voltage AC", voltage_ac_sensor_);
-    LOG_SENSOR("   ", "Freqiency AC", freq_ac_sensor_);
-    LOG_SENSOR("   ", "Power AC", power_ac_sensor_);
-    LOG_SENSOR("   ", "Temperature", temperature_sensor_);
-    LOG_SENSOR("   ", "Energy Today", energy_today_sensor_);
-    LOG_SENSOR("   ", "Energy Total", energy_total_sensor_);
-    LOG_SENSOR("   ", "Total Time", total_time_sensor_);
-    LOG_SENSOR("   ", "Power Max", power_max_sensor_);
-    LOG_TEXT_SENSOR("   ", "Firmware Version", firmware_version_text_sensor_);
-    LOG_TEXT_SENSOR("   ", "Manufacturer", manufacturer_text_sensor_);
-    LOG_TEXT_SENSOR("   ", "Serial Number", serial_number_text_sensor_);
+    LOG_SENSOR       ("   ", "Voltage PV1", voltage_pv1_sensor_);
+    LOG_SENSOR       ("   ", "Voltage PV2", voltage_pv2_sensor_);
+    LOG_SENSOR       ("   ", "Power PV", power_pv_sensor_);
+    LOG_SENSOR       ("   ", "Voltage AC", voltage_ac_sensor_);
+    LOG_SENSOR       ("   ", "Freqiency AC", freq_ac_sensor_);
+    LOG_SENSOR       ("   ", "Power AC", power_ac_sensor_);
+    LOG_SENSOR       ("   ", "Temperature", temperature_sensor_);
+    LOG_SENSOR       ("   ", "Energy Today", energy_today_sensor_);
+    LOG_SENSOR       ("   ", "Energy Total", energy_total_sensor_);
+    LOG_SENSOR       ("   ", "Total Time", total_time_sensor_);
+    LOG_SENSOR       ("   ", "Power Max", power_max_sensor_);
+    LOG_TEXT_SENSOR  ("   ", "Firmware Version", firmware_version_text_sensor_);
+    LOG_TEXT_SENSOR  ("   ", "Manufacturer", manufacturer_text_sensor_);
+    LOG_TEXT_SENSOR  ("   ", "Serial Number", serial_number_text_sensor_);
 
     check_uart_settings(9600, 1, esphome::uart::UART_CONFIG_PARITY_NONE, 8);
   }
@@ -207,8 +209,5 @@ namespace growatt_mtl {
     comms_pin_->digital_write(1);
   }
 
-
-
-
-}  // growatt-mtk
+}  // growatt-mtl
 }  // esphome

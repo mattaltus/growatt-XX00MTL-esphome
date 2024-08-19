@@ -24,6 +24,7 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     void set_voltage_pv2_sensor   (sensor::Sensor *voltage_pv2_sensor)    { voltage_pv2_sensor_    = voltage_pv2_sensor; }
     void set_power_pv_sensor      (sensor::Sensor *power_pv_sensor)       { power_pv_sensor_       = power_pv_sensor; }
     void set_voltage_ac_sensor    (sensor::Sensor *voltage_ac_sensor)     { voltage_ac_sensor_     = voltage_ac_sensor; }
+    void set_current_ac_sensor    (sensor::Sensor *current_ac_sensor)     { current_ac_sensor_     = current_ac_sensor; }
     void set_freq_ac_sensor       (sensor::Sensor *freq_ac_sensor)        { freq_ac_sensor_        = freq_ac_sensor; }
     void set_power_ac_sensor      (sensor::Sensor *power_ac_sensor)       { power_ac_sensor_       = power_ac_sensor; }
     void set_temperature_sensor   (sensor::Sensor *temperature_sensor)    { temperature_sensor_    = temperature_sensor; }
@@ -53,6 +54,7 @@ class GrowattMTLComponent : public uart::UARTDevice, public PollingComponent {
     sensor::Sensor *voltage_pv2_sensor_{nullptr};
     sensor::Sensor *power_pv_sensor_{nullptr};
     sensor::Sensor *voltage_ac_sensor_{nullptr};
+    sensor::Sensor *current_ac_sensor_{nullptr};
     sensor::Sensor *freq_ac_sensor_{nullptr};
     sensor::Sensor *power_ac_sensor_{nullptr};
     sensor::Sensor *temperature_sensor_{nullptr};

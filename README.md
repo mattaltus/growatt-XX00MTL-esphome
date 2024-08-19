@@ -1,4 +1,4 @@
-# Growatt XX00MTP ESPHOME
+# Growatt XX00MTL ESPHOME
 
 ESPHome component to monitor a Growatt MTL inverter.
 

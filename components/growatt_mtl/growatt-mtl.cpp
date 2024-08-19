@@ -32,25 +32,27 @@ namespace growatt_mtl {
   }
 
   static std::string fault_text(int fault) {
-    switch (fault){
+    switch (fault) {
+      case 1 ... 23:
+        return "Coded Error";
       case GW_ERROR_AUTO_TEST_FAIL:
-        return "Auto test failure";
+        return "Auto Test Failed";
       case GW_ERROR_NO_AC_CONNECTION:
-        return "No AC connection";
+        return "No AC Connection";
       case GW_ERROR_PV_ISOLATION_LOW:
-        return "PV isolation too low";
+        return "PV Isolation Low";
       case GW_ERROR_RESIDUAL_I_HIGH:
-        return "Residual too high";
+        return "Residual I High";
       case GW_ERROR_OUTPUT_HIGH_DCI:
-        return "DC output too high";
+        return "High Output DCI";
       case GW_ERROR_PV_VOLTAGE_HIGH:
-        return "PV voltage too high";
+        return "PV Voltage High";
       case GW_ERROR_AC_V_OUTOFRANGE:
-        return "AC voltage out of range";
+        return "AC Voltage Outrange";
       case GW_ERROR_AC_F_OUTOFRANGE:
-        return "AC frequency out of range";
+        return "AC Frequency Outrange";
       case GW_ERROR_MODULE_HOT:
-        return "Module too hot";
+        return "Module Hot";
       default:
         return "Unknown Error";
     }

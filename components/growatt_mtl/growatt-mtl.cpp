@@ -48,6 +48,13 @@ namespace growatt_mtl {
     if (gw_data_get_status(d) != GW_STATUS_FAULT)
       return "None";
 
+    if (gw_data_get_iso_fault(d))
+      return "Isolation Fault";
+    if (gw_data_get_gfci_fault(d))
+      return "GFCI Fault";
+    if (gw_data_get_dci_fault(d))
+      return "DCI Fault";
+
     switch (gw_data_get_fault_code(d)) {
       case 1 ... 23:
         return "Coded Error";

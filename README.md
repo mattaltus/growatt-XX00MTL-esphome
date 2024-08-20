@@ -8,7 +8,7 @@ The old school Growatt 3600-MTL/4200-MTL/5000-MTL inverters with their custom se
 
 ## Protocol
 
-A copy of the protcol docs and a handy perl program can be found [here](https://www.snafu.priv.at/mystuff/growatt.html)
+A copy of the protocol docs and a handy perl program can be found [here](https://www.snafu.priv.at/mystuff/growatt.html)
 
 ## Hardware
 

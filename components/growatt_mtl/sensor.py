@@ -25,7 +25,7 @@ from esphome.const import (
     UNIT_WATT_HOURS,
     UNIT_HERTZ,
     UNIT_EMPTY,
-    UNIT_SECOND,
+    UNIT_HOUR,
 )
 
 from . import CONF_GROWATT_ID, GrowattMTLComponent
@@ -152,7 +152,7 @@ CONFIG_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_POWER,
         ),
         cv.Optional(CONF_TOTAL_TIME): sensor.sensor_schema(
-            unit_of_measurement=UNIT_SECOND,
+            unit_of_measurement=UNIT_HOUR,
             icon=ICON_TIMER,
             accuracy_decimals=1,
             device_class=DEVICE_CLASS_DURATION,
